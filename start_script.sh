@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo"starting script"
+echo " hello"
