@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 hooks:
   AfterInstall:
-    - location: /home/ubuntu/run_script.sh
+    - location: /home/ubuntu/start_script.sh
       timeout: 300
   ApplicationStart:
     - location: /home/ubuntu/run_script.sh
