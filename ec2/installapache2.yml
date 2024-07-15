@@ -1,0 +1,15 @@
+--- 
+- hosts: managednode
+  become: true
+  connection: local
+  tasks:
+    - name: Install apache2
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+
+    - name: Start apache2 service
+      ansible.builtin.systemd:
+        name: apache2
+        state: started
+        enabled: yes
