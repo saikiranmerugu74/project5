@@ -2,5 +2,4 @@
 
 set -e
 
-ansible-playbook -i inventory.ini ec2_create.yaml --vault-password-file vault.pass
-echo "Running ansible command through script"
+ansible-playbook -i inventory.ini installapache2.yml --vault-password-file vault.pass
