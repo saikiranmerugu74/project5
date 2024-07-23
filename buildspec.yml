@@ -19,13 +19,14 @@ phases:
       - mkdir -p ansible_files
       - cd ansible_files
       - ansible-galaxy collection install amazon.aws
-      - openssl rand -base64 2048 > vault.pass
+      #- openssl rand -base64 2048 > vault.pass
   build:
     commands:
       - cd ..
       - cd ec2
       - ls
       - pwd
+      - openssl rand -base64 2048 > vault.pass
       - ansible-vault create group_vars/all/pass.yml --vault-password-file vault.pass
       # Here you should manually add the Access key and Secret access key in pass.yml
       # Alternatively, you can echo them into the file using environment variables or other secure methods
