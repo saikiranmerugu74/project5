@@ -1,0 +1,34 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.x
+    commands:
+      - sudo apt-get update
+      - sudo apt-get install -y python3
+      - sudo apt-get install -y python3-pip
+      - sudo apt-get install -y software-properties-common
+      - sudo add-apt-repository --yes --update ppa:ansible/ansible
+      - sudo apt-get install -y ansible
+      - sudo apt-get install -y python3-boto3
+  pre_build:
+    commands:
+      - mkdir -p ansible_files
+      - cd ansible_files
+      - ansible-galaxy collection install amazon.aws
+      - openssl rand -base64 2048 > vault.pass
+  build:
+    commands:
+      - ansible-vault create group_vars/all/pass.yml --vault-password-file vault.pass
+      # Here you should manually add the Access key and Secret access key in pass.yml
+      # Alternatively, you can echo them into the file using environment variables or other secure methods
+      # Example:
+      # echo -e "aws_access_key: $AWS_ACCESS_KEY\naws_secret_key: $AWS_SECRET_KEY" | ansible-vault encrypt_string --vault-password-file vault.pass --output=group_vars/all/pass.yml
+  post_build:
+    commands:
+      - ansible-playbook -i inventory.ini ec2_create.yaml --vault-password-file vault.pass
+
+artifacts:
+  files:
+    - ansible_files/**
