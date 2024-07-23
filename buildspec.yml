@@ -5,6 +5,8 @@ phases:
     runtime-versions:
       python: 3.x
     commands:
+      - ls
+      - pwd
       - sudo apt update
       - sudo apt-get install -y python3
       - sudo apt-get install -y python3-pip
