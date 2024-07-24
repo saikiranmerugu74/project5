@@ -9,9 +9,11 @@
       # vpc_subnet_id: subnet-013744e41e8088axx
       instance_type: t2.micro
       security_group: default
-      region: us-east-1
-      aws_access_key: "{{ec2_access_key}}"  # From vault as defined
-      aws_secret_key: "{{ec2_secret_key}}"  # From vault as defined      
+      region: us-east-2
+      #aws_access_key: "{{ec2_access_key}}"  # From vault as defined
+      #aws_secret_key: "{{ec2_secret_key}}"  # From vault as defined
+      aws_access_key: AKIATNBAM4W3VQPTAVNF
+      aws_secret_key: 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
       network:
         assign_public_ip: true
       image_id: ami-04b70fa74e45c3917
