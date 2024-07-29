@@ -26,16 +26,16 @@ phases:
       - cd ec2
       - ls
       - pwd
-      #- openssl rand -base64 2048 > vault.pass
-      #- ansible-vault create group_vars/all/pass.yml --vault-password-file vault.pass
+      - openssl rand -base64 2048 > vault.pass
+      - ansible-vault create group_vars/all/pass.yml --vault-password-file vault.pass
       # Here you should manually add the Access key and Secret access key in pass.yml
       # Alternatively, you can echo them into the file using environment variables or other secure methods
       # Example:
-      # echo -e "aws_access_key: $AWS_ACCESS_KEY\naws_secret_key: $AWS_SECRET_KEY" | ansible-vault encrypt_string --vault-password-file vault.pass --output=group_vars/all/pass.yml
+      - echo -e "aws_access_key: $AWS_ACCESS_KEY\naws_secret_key: $AWS_SECRET_KEY" | ansible-vault encrypt_string --vault-password-file vault.pass --output=group_vars/all/pass.yml
   post_build:
     commands:
-      #- ansible-playbook -i inventory.ini ec2_create.yaml --vault-password-file vault.pass
-      - ansible-playbook -i inventory.ini ec2_create.yaml
+      - ansible-playbook -i inventory.ini ec2_create.yaml --vault-password-file vault.pass
+      #- ansible-playbook -i inventory.ini ec2_create.yaml
 
 artifacts:
   files:
