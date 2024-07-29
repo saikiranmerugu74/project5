@@ -19,6 +19,8 @@ phases:
       - mkdir -p ansible_files
       - cd ansible_files
       - ansible-galaxy collection install amazon.aws
+      - cd ..
+      - cd ec2
       - openssl rand -base64 2048 > vault.pass
       # Retrieve AWS credentials from Secrets Manager
       - SECRET_STRING=$(aws secretsmanager get-secret-value --secret-id my/aws/credentials --query SecretString --output text)
