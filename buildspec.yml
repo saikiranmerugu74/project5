@@ -5,37 +5,36 @@ phases:
     runtime-versions:
       python: 3.x
     commands:
-      - ls
-      - pwd
-      - sudo apt update
+      - echo "Starting APT update"
+      - sudo apt-get update -o Debug::Acquire::http=true -o Debug::pkgProblemResolver=true -o Debug::pkgDepCache::Marker=true
       - sudo apt-get install -y python3
       - sudo apt-get install -y python3-pip
       - sudo apt-get install -y software-properties-common
       - sudo add-apt-repository --yes --update ppa:ansible/ansible
       - sudo apt-get install -y ansible
       - sudo apt-get install -y python3-boto3
+      - sudo apt-get install -y jq  # Install jq to parse JSON
   pre_build:
     commands:
       - mkdir -p ansible_files
       - cd ansible_files
       - ansible-galaxy collection install amazon.aws
-      #- openssl rand -base64 2048 > vault.pass
+      - openssl rand -base64 2048 > vault.pass
+      # Retrieve AWS credentials from Secrets Manager
+      - SECRET_STRING=$(aws secretsmanager get-secret-value --secret-id my/aws/credentials --query SecretString --output text)
+      - AWS_ACCESS_KEY_ID=$(echo $SECRET_STRING | jq -r '.aws_access_key_id')
+      - AWS_SECRET_ACCESS_KEY=$(echo $SECRET_STRING | jq -r '.aws_secret_access_key')
   build:
     commands:
-      - cd ..
-      - cd ec2
-      - ls
-      - pwd
-      - openssl rand -base64 2048 > vault.pass
-      - ansible-vault create group_vars/all/pass.yml --vault-password-file vault.pass
-      # Here you should manually add the Access key and Secret access key in pass.yml
-      # Alternatively, you can echo them into the file using environment variables or other secure methods
-      # Example:
-      - echo -e "aws_access_key: $AWS_ACCESS_KEY\naws_secret_key: $AWS_SECRET_KEY" | ansible-vault encrypt_string --vault-password-file vault.pass --output=group_vars/all/pass.yml
+      - cd ansible_files
+      - echo -e "aws_access_key: $AWS_ACCESS_KEY_ID\naws_secret_key: $AWS_SECRET_ACCESS_KEY" > plain_pass.yml
+      - ansible-vault encrypt plain_pass.yml --vault-password-file vault.pass --output group_vars/all/pass.yml
+      - rm plain_pass.yml  # Remove plain text credentials file for security
+      - ansible-playbook --syntax-check ec2_create.yaml
+      - ansible-inventory -i inventory.ini --list
   post_build:
     commands:
-      - ansible-playbook -i inventory.ini ec2_create.yaml --vault-password-file vault.pass
-      #- ansible-playbook -i inventory.ini ec2_create.yaml
+      - ansible-playbook -i inventory.ini ec2_create.yaml --vault-password-file vault.pass -vvvv
 
 artifacts:
   files:
