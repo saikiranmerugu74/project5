@@ -36,6 +36,8 @@ phases:
     commands:
       - echo "Entering ansible_files directory"
       - cd ansible_files
+      - cd ..
+      - cd ec2
       - echo "Creating plain_pass.yml"
       - >
         echo -e "aws_access_key: $AWS_ACCESS_KEY_ID\naws_secret_key: $AWS_SECRET_ACCESS_KEY" > plain_pass.yml
