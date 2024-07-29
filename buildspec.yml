@@ -24,13 +24,21 @@ phases:
       - ansible-galaxy collection install amazon.aws
       - echo "Generating vault password file"
       - openssl rand -base64 2048 > vault.pass
+      - echo "Retrieving AWS credentials from Secrets Manager"
+      - >
+        SECRET_STRING=$(aws secretsmanager get-secret-value --secret-id my/aws/credentials --query SecretString --output text)
+      - >
+        AWS_ACCESS_KEY_ID=$(echo $SECRET_STRING | jq -r '.aws_access_key_id')
+      - >
+        AWS_SECRET_ACCESS_KEY=$(echo $SECRET_STRING | jq -r '.aws_secret_access_key')
 
   build:
     commands:
       - echo "Entering ansible_files directory"
       - cd ansible_files
       - echo "Creating plain_pass.yml"
-      - echo -e "aws_access_key: $AWS_ACCESS_KEY_ID\naws_secret_key: $AWS_SECRET_ACCESS_KEY" > plain_pass.yml
+      - >
+        echo -e "aws_access_key: $AWS_ACCESS_KEY_ID\naws_secret_key: $AWS_SECRET_ACCESS_KEY" > plain_pass.yml
       - echo "Encrypting plain_pass.yml with Ansible Vault"
       - ansible-vault encrypt plain_pass.yml --vault-password-file vault.pass --output group_vars/all/pass.yml
       - echo "Removing plain_pass.yml"
@@ -48,3 +56,4 @@ phases:
 artifacts:
   files:
     - ansible_files/**
+
