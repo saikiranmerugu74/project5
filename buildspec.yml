@@ -14,28 +14,35 @@ phases:
       - sudo apt-get install -y ansible
       - sudo apt-get install -y python3-boto3
       - sudo apt-get install -y jq  # Install jq to parse JSON
+
   pre_build:
     commands:
+      - echo "Creating ansible_files directory"
       - mkdir -p ansible_files
       - cd ansible_files
+      - echo "Installing Ansible Galaxy collection"
       - ansible-galaxy collection install amazon.aws
-      - cd ..
-      - cd ec2
+      - echo "Generating vault password file"
       - openssl rand -base64 2048 > vault.pass
-      # Retrieve AWS credentials from Secrets Manager
-      - SECRET_STRING=$(aws secretsmanager get-secret-value --secret-id my/aws/credentials --query SecretString --output text)
-      - AWS_ACCESS_KEY_ID=$(echo $SECRET_STRING | jq -r '.aws_access_key_id')
-      - AWS_SECRET_ACCESS_KEY=$(echo $SECRET_STRING | jq -r '.aws_secret_access_key')
+
   build:
     commands:
+      - echo "Entering ansible_files directory"
       - cd ansible_files
+      - echo "Creating plain_pass.yml"
       - echo -e "aws_access_key: $AWS_ACCESS_KEY_ID\naws_secret_key: $AWS_SECRET_ACCESS_KEY" > plain_pass.yml
+      - echo "Encrypting plain_pass.yml with Ansible Vault"
       - ansible-vault encrypt plain_pass.yml --vault-password-file vault.pass --output group_vars/all/pass.yml
+      - echo "Removing plain_pass.yml"
       - rm plain_pass.yml  # Remove plain text credentials file for security
+      - echo "Syntax checking Ansible playbook"
       - ansible-playbook --syntax-check ec2_create.yaml
+      - echo "Listing Ansible inventory"
       - ansible-inventory -i inventory.ini --list
+
   post_build:
     commands:
+      - echo "Running Ansible playbook to create EC2 instance"
       - ansible-playbook -i inventory.ini ec2_create.yaml --vault-password-file vault.pass -vvvv
 
 artifacts:
