@@ -18,8 +18,11 @@ phases:
   pre_build:
     commands:
       - echo "Creating ansible_files directory"
-      - mkdir -p ansible_files
-      - cd ansible_files
+      - pwd
+      - ls
+      #- mkdir -p ansible_files
+      #- cd ansible_files
+      - cd ec2
       - echo "Installing Ansible Galaxy collection"
       - ansible-galaxy collection install amazon.aws
       - echo "Generating vault password file"
@@ -37,8 +40,8 @@ phases:
       - echo "Entering ansible_files directory"
       - pwd
       - ls
-      - cd ..
-      - cd ec2
+      #- cd ..
+      #- cd ec2
       - echo "Creating plain_pass.yml"
       - >
         echo -e "aws_access_key: $AWS_ACCESS_KEY_ID\naws_secret_key: $AWS_SECRET_ACCESS_KEY" > plain_pass.yml
