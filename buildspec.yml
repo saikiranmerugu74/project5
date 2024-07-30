@@ -52,7 +52,7 @@ phases:
       - echo "Syntax checking Ansible playbook"
       - ansible-playbook --syntax-check ec2_create.yaml
       - echo "Listing Ansible inventory"
-      - ansible-inventory -i inventory.ini --list
+      - ansible-inventory -i inventory.ini --list --vault-password-file vault.pass
 
   post_build:
     commands:
