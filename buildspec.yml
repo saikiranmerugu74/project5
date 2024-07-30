@@ -44,7 +44,7 @@ phases:
       #- cd ec2
       - echo "Creating plain_pass.yml"
       - >
-      - echo e "ec2_access_key: $AWS_ACCESS_KEY_ID\nec2_secret_key: $AWS_SECRET_ACCESS_KEY" > plain_pass.yml
+      - echo -e "ec2_access_key: $AWS_ACCESS_KEY_ID\nec2_secret_key: $AWS_SECRET_ACCESS_KEY" > plain_pass.yml
       - echo "Encrypting plain_pass.yml with Ansible Vault"
       - ansible-vault encrypt plain_pass.yml --vault-password-file vault.pass --output group_vars/all/pass.yml
       - echo "Removing plain_pass.yml"
