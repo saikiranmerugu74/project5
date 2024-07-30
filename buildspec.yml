@@ -59,6 +59,7 @@ phases:
       - echo "Running Ansible playbook to create EC2 instance"
       - pwd
       - ls
+      - ansible-vault view group_vars/all/pass.yml --vault-password-file vault.pass
       - ansible-playbook -i inventory.ini ec2_create.yaml --vault-password-file vault.pass -vvvv
 
 artifacts:
