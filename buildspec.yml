@@ -57,6 +57,8 @@ phases:
   post_build:
     commands:
       - echo "Running Ansible playbook to create EC2 instance"
+      - pwd
+      - ls
       - ansible-playbook -i inventory.ini ec2_create.yaml --vault-password-file vault.pass -vvvv
 
 artifacts:
