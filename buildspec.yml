@@ -37,7 +37,6 @@ phases:
       - echo "Entering ansible_files directory"
       - pwd
       - ls
-      - cd ansible_files
       - cd ..
       - cd ec2
       - echo "Creating plain_pass.yml"
